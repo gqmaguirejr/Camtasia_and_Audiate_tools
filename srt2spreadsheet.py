@@ -24,6 +24,8 @@
 # the second time is the duration of the clip (i.e., until when this caption is to be shown)
 # The next line is the caption itself. The caption may be multiple lines and ends with a blank line
 #
+# Note: It seems when Camtasia export captions that it put a marker '\ufeff' in the first 4 bytes of the file
+# The program ignores these.
 
 import csv, requests, time
 from pprint import pprint
@@ -123,8 +125,20 @@ def main():
                 continue
 
             if state == 'find_caption_number':
+                # if len(line) == 0: #  handle extra empty lines
+                #     continue
                 # read the caption number
-                caption_number=int(line)
+                # in the caption export from Camtasia the file begins '\ufeff1\n'
+                if line ==  '\ufeff1\n':
+                    print("starting file marker found")
+                    caption_number=1
+                else:
+                    try:
+                        caption_number=int(line)
+                    except:
+                        print("cnt={0}, line={1}".format(cnt, line))
+                        caption_number=cnt+1
+
                 state='get_time_info'
                 continue
 
@@ -152,12 +166,12 @@ def main():
 
     print("caption_number={0}, time={1}, duration={2}, text={3}".format(caption_number, caption_timestamp, caption_duration, caption_text))
 
-    # # store the last caption
-    # srt_data[caption_number] = {'frame': caption_timestamp*rate,
-    #                             'time': caption_timestamp,
-    #                             'duration': caption_duration,
-    #                             'text': caption_text.rstrip() 
-    # }
+    # store the last caption
+    srt_data[caption_number] = {'frame': caption_timestamp*rate,
+                                'time': caption_timestamp,
+                                'duration': caption_duration,
+                                'text': caption_text.rstrip() 
+     }
 
 
     if Verbose_Flag:

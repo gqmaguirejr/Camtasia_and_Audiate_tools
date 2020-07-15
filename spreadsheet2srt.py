@@ -11,6 +11,13 @@
 # commands to use:
 # ./spreadsheet2srt.py filename filename
 #
+# The spreadsheet is assumed to have the following columns: 'frame', 'time', 'duration', 'text'
+#
+# Note that in the SRT to spreadsheet program we put the caption number in the first column ("A"),
+# but this value is ignored when reading the spreadsheet so rows can simply be deleted.
+# This will mean that the caption numbering will be changed - so deleting rows will produce a file that does not match the original SRT file.
+#
+#
 # The entries in the SRT file have the form:
 #1
 # 00:00:00,000 --> 00:00:02,240
@@ -24,6 +31,7 @@
 # the second time is the duration of the clip (i.e., until when this caption is to be shown)
 # The next line is the caption itself. The caption may be multiple lines and ends with a blank line
 #
+
 
 import csv, requests, time
 from pprint import pprint
