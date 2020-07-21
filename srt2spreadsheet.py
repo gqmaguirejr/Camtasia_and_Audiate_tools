@@ -140,7 +140,7 @@ def main():
                     try:
                         caption_number=int(line)
                     except:
-                        print("cnt={0}, line={1}".format(cnt, line))
+                        print("expected a caption number - cnt={0}, line={1}".format(cnt, line))
                         #caption_number=cnt+1
                         continue
 
