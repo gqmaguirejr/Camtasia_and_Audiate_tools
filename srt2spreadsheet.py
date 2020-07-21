@@ -114,19 +114,23 @@ def main():
         for cnt, line in enumerate(input_file):
             if Verbose_Flag:
                 print("state: {0}, line length: {1} - Line {2}: {3}".format(state, len(line), cnt, line))
-            if len(line) == 1 and line == '\n':
+            if state == 'get_caption_text' and len(line) == 1 and line == '\n':
                 srt_data[caption_number] = {'frame': caption_timestamp*rate,
                                             'time': caption_timestamp,
                                             'duration': caption_duration,
                                             'text': caption_text.rstrip() 
                 }
+                if Verbose_Flag:
+                    print("srt_data[{0}]: {1}".format(caption_number, srt_data[caption_number]))
                 state='find_caption_number'
                 caption_text=''
                 continue
 
             if state == 'find_caption_number':
-                # if len(line) == 0: #  handle extra empty lines
-                #     continue
+                # if we are looking for a caption number and find a blank line
+                if len(line) == 1 and line == '\n' : #  handle extra empty lines
+                    print("found an unexpected blank line at cnt={0} when looking for a caption number".format(cnt))
+                    continue
                 # read the caption number
                 # in the caption export from Camtasia the file begins '\ufeff1\n'
                 if line ==  '\ufeff1\n':
@@ -137,7 +141,8 @@ def main():
                         caption_number=int(line)
                     except:
                         print("cnt={0}, line={1}".format(cnt, line))
-                        caption_number=cnt+1
+                        #caption_number=cnt+1
+                        continue
 
                 state='get_time_info'
                 continue
